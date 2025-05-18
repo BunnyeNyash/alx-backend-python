@@ -16,7 +16,7 @@ def stream_users():
         connection = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="your_password_here",  # Replace with your MySQL root password
+            password="bunnye123winter",  # Replace with your MySQL root password
             database="ALX_prodev"
         )
         if connection.is_connected():
