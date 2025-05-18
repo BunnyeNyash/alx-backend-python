@@ -10,6 +10,11 @@ import csv
 import uuid
 from mysql.connector import Error
 
+# Define constants
+DB_NAME = "ALX_prodev"
+TABLE_NAME = "user_data"
+
+# Define functions
 def connect_db():
     """Connect to the MySQL database server."""
     try:
