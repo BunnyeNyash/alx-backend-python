@@ -3,7 +3,7 @@
 # Defines a generator to stream rows one by one from the user_data table
 # Database: ALX_prodev
 # Table: user_data
-# Columns: user_id, name, email, age
+# Columns: user_id, name, email, age 
 
 # Import necessary libraries
 import mysql.connector
