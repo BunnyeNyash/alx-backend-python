@@ -14,6 +14,7 @@ python-context-async-perations-0x02/
 ├── 0-databaseconnection.py
 ├── 1-execute.py
 ├── 3-concurrent.py
+└── README.md                  # Project documentation
 ```
 
 ## File Descriptions
@@ -21,7 +22,7 @@ python-context-async-perations-0x02/
   - `1-execute.py`: Reusable context manager for query execution.
   - `3-concurrent.py`: Concurrent async database queries with `aiosqlite`.
 
-## Requirements
+## Prerequisites
 - Python 3.8 or higher
 - SQLite3 database with a `users` table
 - `aiosqlite` library for Task 2 (`pip install aiosqlite`)
