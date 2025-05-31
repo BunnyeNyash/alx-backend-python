@@ -29,6 +29,7 @@ By the end of this project, you should be able to explain:
 - **Directory:** `0x03-Unittests_and_integration_tests`
 
 ## Directory Structure
+```
 0x03-Unittests_and_integration_tests/
 ├── README.md
 ├── utils.py
@@ -36,6 +37,7 @@ By the end of this project, you should be able to explain:
 ├── fixtures.py
 ├── test_utils.py
 └── test_client.py
+```
 
 ## File Descriptions
   - `test_utils.py`: Unit tests for `utils.py` functions.
@@ -109,6 +111,6 @@ The project consists of the following tasks, each involving specific testing obj
 ## Testing Resources
 - [unittest — Unit testing framework](https://docs.python.org/3/library/unittest.html)
 - [unittest.mock — Mock object library](https://docs.python.org/3/library/unittest.mock.html)
-- [How to mock a readonly property with mock?](https://stackoverflow.com/questions/11876727/how-to-mock-a-readonly-property-with-mock)
+- [How to mock a readonly property with mock?](https://stackoverflow.com/questions/11836436/how-to-mock-a-readonly-property-with-mock)
 - [parameterized](https://pypi.org/project/parameterized/)
 - [Memoization](https://en.wikipedia.org/wiki/Memoization)
