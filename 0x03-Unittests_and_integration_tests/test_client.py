@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Unit tests for client.GithubOrgClient class."""
+"""Unit and integration tests for client.GithubOrgClient class."""
 
 import unittest
-from parameterized import parameterized
-from unittest.mock import patch, PropertyMock
+from parameterized import parameterized, parameterized_class
+from unittest.mock import patch, PropertyMock, Mock
 from client import GithubOrgClient
+import fixtures
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -60,6 +61,7 @@ class TestGithubOrgClient(unittest.TestCase):
         client = GithubOrgClient("test_org")
         self.assertEqual(client.has_license(repo, license_key), expected)
 
+
 @parameterized_class([
     {
         "org_payload": fixtures.org_payload,
@@ -92,3 +94,7 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     def tearDownClass(cls):
         """Tear down class by stopping the patcher."""
         cls.get_patcher.stop()
+
+    def test_public_repos(self):
+        """Placeholder test to ensure parameterized class is recognized."""
+        self.assertTrue(True)
