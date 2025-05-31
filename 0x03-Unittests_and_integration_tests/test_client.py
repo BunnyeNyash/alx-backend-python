@@ -96,5 +96,6 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         cls.get_patcher.stop()
 
     def test_public_repos(self):
-        """Placeholder test to ensure parameterized class is recognized."""
-        self.assertTrue(True)
+        """Test GithubOrgClient.public_repos with fixture data."""
+        client = GithubOrgClient("google")
+        self.assertEqual(client.public_repos(), self.expected_repos)
