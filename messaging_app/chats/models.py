@@ -1,10 +1,10 @@
 import uuid
-from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db import models
 
 class User(AbstractUser):
     """Custom User model extending AbstractUser with additional fields."""
-    user_id = models.UUIDField(unique=True, editable=False, null=True, blank=True)
+    user_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=128)
     first_name = models.CharField(max_length=30, blank=True)
@@ -16,10 +16,9 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
-
 class Conversation(models.Model):
     """Model to track conversations between users."""
-    conversation_id = models.UUIDField(unique=True, editable=False, null=True, blank=True)
+    conversation_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     participants = models.ManyToManyField(User, related_name='conversations')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -27,10 +26,9 @@ class Conversation(models.Model):
     def __str__(self):
         return f"Conversation {self.conversation_id} ({len(self.participants.all())} participants)"
 
-
 class Message(models.Model):
     """Model for messages within a conversation."""
-    message_id = models.UUIDField(unique=True, editable=False, null=True, blank=True)
+    message_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, related_name='messages')
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
     message_body = models.TextField()
