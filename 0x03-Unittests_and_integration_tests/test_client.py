@@ -2,9 +2,10 @@
 """Unit tests for client.GithubOrgClient class."""
 
 import unittest
-from parameterized import parameterized
-from unittest.mock import patch, PropertyMock
+from parameterized import parameterized, parameterized_class
+from unittest.mock import patch, PropertyMock, Mock
 from client import GithubOrgClient
+from fixtures import org_payload, repos_payload, expected_repos, apache2_repos
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -59,3 +60,29 @@ class TestGithubOrgClient(unittest.TestCase):
         """Test GithubOrgClient.has_license returns correct value."""
         client = GithubOrgClient("test_org")
         self.assertEqual(client.has_license(repo, license_key), expected)
+
+@parameterized_class([
+    {
+        "org_payload": org_payload,
+        "repos_payload": repos_payload,
+        "expected_repos": expected_repos,
+        "apache2_repos": apache2_repos
+    }
+])
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """Integration test case for GithubOrgClient.public_repos."""
+
+    @classmethod
+    def setUpClass(cls):
+        """Set up class by mocking requests.get with fixture payloads."""
+        cls.get_patcher = patch('requests.get')
+        mock_get = cls.get_patcher.start()
+        mock_get.return_value = Mock(json=lambda: None)
+        mock_get.return_value.json.side_effect = [
+            cls.org_payload, cls.repos_payload
+        ]
+
+    @classmethod
+    def tearDownClass(cls):
+        """Tear down class by stopping the patcher."""
+        cls.get_patcher.stop()
