@@ -1,7 +1,5 @@
-```python
 from rest_framework import serializers
 from .models import User, Conversation, Message
-from rest_framework.exceptions import ValidationError
 
 class UserSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(source='get_full_name', read_only=True)
@@ -26,9 +24,9 @@ class MessageSerializer(serializers.ModelSerializer):
         sender_id = data.get('sender_id')
         conversation = data.get('conversation')
         if not User.objects.filter(user_id=sender_id).exists():
-            raise ValidationError("Invalid sender_id: User does not exist.")
+            raise serializers.ValidationError("Invalid sender_id: User does not exist.")
         if not conversation.participants.filter(user_id=sender_id).exists():
-            raise ValidationError("Sender must be a participant in the conversation.")
+            raise serializers.ValidationError("Sender must be a participant in the conversation.")
         return data
 
 class ConversationSerializer(serializers.ModelSerializer):
@@ -60,10 +58,10 @@ class ConversationSerializer(serializers.ModelSerializer):
     def validate_participant_ids(self, value):
         """Validate that participant_ids are valid and exist."""
         if not value:
-            raise ValidationError("At least one participant_id is required.")
+            raise serializers.ValidationError("At least one participant_id is required.")
         for pid in value:
             if not User.objects.filter(user_id=pid).exists():
-                raise ValidationError(f"Invalid participant_id: {pid} does not exist.")
+                raise serializers.ValidationError(f"Invalid participant_id: {pid} does not exist.")
         return value
 
     def create(self, validated_data):
@@ -77,4 +75,3 @@ class ConversationSerializer(serializers.ModelSerializer):
         """Generate a conversation name based on participant names."""
         names = [user.get_full_name() for user in obj.participants.all()]
         return ", ".join(names) or "Unnamed Conversation"
-```
