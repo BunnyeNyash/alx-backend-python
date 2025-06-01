@@ -21,14 +21,23 @@ class ConversationViewSet(viewsets.ModelViewSet):
         return self.request.user.conversations.all()
 
     def perform_create(self, serializer):
-        """Create a new conversation and ensure the authenticated user is a participant."""
+        """Create a new conversation, ensuring the authenticated user is included."""
+        validated_data = serializer.validated_data
+        participant_ids = validated_data.get('participant_ids', [])
+        # Convert UUIDs to strings for consistency with serializer
+        participant_ids = [str(pid) for pid in participant_ids]
+        # Ensure authenticated user is included
+        user_id_str = str(self.request.user.user_id)
+        if user_id_str not in participant_ids:
+            participant_ids.append(user_id_str)
+            validated_data['participant_ids'] = participant_ids
         conversation = serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class MessageViewSet(viewsets.ModelViewSet):
     """
     Viewset for listing and sending messages.
-    Filters messages by conversation_id (if provided) or by user's conversations.
+    Filters messages by conversation_id or by user's conversations.
     """
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated]
