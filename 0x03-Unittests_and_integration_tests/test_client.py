@@ -76,12 +76,14 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Set up class by mocking requests.get with fixture payloads."""
+        def get_json_side_effect(url):
+            if url.endswith("/orgs/test_org"):
+                return cls.org_payload
+            return cls.repos_payload
+
         cls.get_patcher = patch('requests.get')
         mock_get = cls.get_patcher.start()
-        mock_get.return_value = Mock(json=lambda: None)
-        mock_get.return_value.json.side_effect = [
-            cls.org_payload, cls.repos_payload
-        ]
+        mock_get.return_value = Mock(json=get_json_side_effect)
 
     @classmethod
     def tearDownClass(cls):
