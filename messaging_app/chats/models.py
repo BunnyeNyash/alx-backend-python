@@ -4,7 +4,11 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     """Custom User model extending AbstractUser with additional fields."""
-    user_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user_id = models.UUIDField(unique=True, editable=False, null=True, blank=True)
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=128)
+    first_name = models.CharField(max_length=30, blank=True)
+    last_name = models.CharField(max_length=30, blank=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True, help_text="User's phone number")
     status = models.CharField(max_length=20, choices=[('online', 'Online'), ('offline', 'Offline')], default='offline')
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
@@ -15,7 +19,7 @@ class User(AbstractUser):
 
 class Conversation(models.Model):
     """Model to track conversations between users."""
-    conversation_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    conversation_id = models.UUIDField(unique=True, editable=False, null=True, blank=True)
     participants = models.ManyToManyField(User, related_name='conversations')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -26,7 +30,7 @@ class Conversation(models.Model):
 
 class Message(models.Model):
     """Model for messages within a conversation."""
-    message_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    message_id = models.UUIDField(unique=True, editable=False, null=True, blank=True)
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, related_name='messages')
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
     message_body = models.TextField()
