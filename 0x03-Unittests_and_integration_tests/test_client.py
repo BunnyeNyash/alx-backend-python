@@ -77,9 +77,12 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     def setUpClass(cls):
         """Set up class by mocking requests.get with fixture payloads."""
         def get_json_side_effect(url):
-            if url.endswith("/orgs/test_org"):
-                return cls.org_payload
-            return cls.repos_payload
+            # Map URLs to payloads dynamically
+            payload_map = {
+                "https://api.github.com/orgs/test_org": cls.org_payload,
+                cls.org_payload.get("repos_url"): cls.repos_payload
+            }
+            return payload_map.get(url, cls.repos_payload)
 
         cls.get_patcher = patch('requests.get')
         mock_get = cls.get_patcher.start()
@@ -92,11 +95,13 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
 
     def test_public_repos(self):
         """Test public_repos returns expected repos from fixtures."""
+        self.assertTrue(hasattr(self, 'expected_repos'), "expected_repos not set")
         client = GithubOrgClient("test_org")
         self.assertEqual(client.public_repos(), self.expected_repos)
 
     def test_public_repos_with_license(self):
         """Test public_repos with apache-2.0 license returns expected repos."""
+        self.assertTrue(hasattr(self, 'apache2_repos'), "apache2_repos not set")
         client = GithubOrgClient("test_org")
         self.assertEqual(client.public_repos(license="apache-2.0"),
                          self.apache2_repos)
