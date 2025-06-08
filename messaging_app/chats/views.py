@@ -5,13 +5,14 @@ from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
+from .permissions import IsParticipantOfConversation
 
 class ConversationViewSet(viewsets.ModelViewSet):
     """
     Viewset for listing and creating conversations.
     """
     serializer_class = ConversationSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsParticipantOfConversation]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['conversation_id']
 
@@ -36,7 +37,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     Viewset for listing and sending messages, supporting flat and nested routes.
     """
     serializer_class = MessageSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsParticipantOfConversation]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['conversation']
 
