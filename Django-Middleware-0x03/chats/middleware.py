@@ -73,3 +73,20 @@ class MessageRateLimitMiddleware:
         
         response = self.get_response(request)
         return response
+
+class RolePermissionMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        # Check if user is authenticated
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden("Authentication required")
+        
+        # Check if user has admin or moderator role
+        # Assuming User model has roles field or is_staff/is_superuser
+        if not (request.user.is_staff or request.user.is_superuser):
+            return HttpResponseForbidden("Admin or Moderator role required")
+        
+        response = self.get_response(request)
+        return response
