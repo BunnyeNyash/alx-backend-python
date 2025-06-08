@@ -41,6 +41,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsParticipantOfConversation]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['conversation']
+    filterset_class = MessageFilter  # Add custom filter
 
     def get_queryset(self):
         """Filter messages by conversation_id (from URL or query) and user."""
