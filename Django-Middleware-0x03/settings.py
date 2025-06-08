@@ -80,13 +80,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'chats.middleware.RequestLoggingMiddleware',
-    'chats.middleware.RestrictAccessByTimeMiddleware',
-    "chats.middleware.OffensiveLanguageMiddleware",
-    'chats.middleware.OffensiveLanguageMiddleware',
-    'chats.middleware.RolePermissionMiddleware',
+    'chats.middleware.RequestLoggingMiddleware',  # Task 1
+    'chats.middleware.RestrictAccessByTimeMiddleware',  # Task 2
+    'chats.middleware.OffensiveLanguageMiddleware',  # Task 3
+    'chats.middleware.RolepermissionMiddleware',  # Task 4
 ]
-
-ROOT_URLCONF = 'messaging_app.urls'
 
 CACHES = {
     'default': {
@@ -94,6 +92,8 @@ CACHES = {
         'LOCATION': 'unique-snowflake',
     }
 }
+
+ROOT_URLCONF = 'messaging_app.urls'
 
 TEMPLATES = [
     {
