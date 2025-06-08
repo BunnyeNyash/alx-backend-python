@@ -81,11 +81,18 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'chats.middleware.RequestLoggingMiddleware',
     'chats.middleware.RestrictAccessByTimeMiddleware',
-    'chats.middleware.MessageRateLimitMiddleware',
+    'chats.middleware.OffensiveLanguageMiddleware',
     'chats.middleware.RolePermissionMiddleware',
 ]
 
 ROOT_URLCONF = 'messaging_app.urls'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
 
 TEMPLATES = [
     {
