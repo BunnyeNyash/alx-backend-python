@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',    # for JWT
-    'chats'             # the chats app to be recognized
+    'django_filters',              # Add django-filter
+    'chats'                        # the chats app to be recognized
 ]
 
 # DRF Configuration
@@ -55,6 +56,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,  # 20 messages per page
 }
 
 
