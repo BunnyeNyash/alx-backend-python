@@ -6,6 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
 from .permissions import IsParticipantOfConversation
+from .filters import MessageFilter
 
 class ConversationViewSet(viewsets.ModelViewSet):
     """
@@ -63,3 +64,10 @@ class MessageViewSet(viewsets.ModelViewSet):
             raise serializer.ValidationError("Invalid or unauthorized conversation.")
         message = serializer.save(sender=self.request.user, conversation=conversation)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def perform_destroy(self, instance):
+        """Delete a message, ensuring the user is a participant."""
+        if not instance.conversation.participants.filter(user_id=self.request.user.user_id).exists():
+            return Response({"detail": "You are not a participant in this conversation."}, status=status.HTTP_403_FORBIDDEN)
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
