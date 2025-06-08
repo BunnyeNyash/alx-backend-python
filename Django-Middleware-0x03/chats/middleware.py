@@ -4,12 +4,15 @@ from django.conf import settings
 from django.http import HttpResponseForbidden
 from django.utils import timezone
 from django.core.cache import cache
+import os
 
-# Configure logging
+# Configure logging to write to requests.log in project root
+log_file = os.path.join(settings.BASE_DIR, 'requests.log')
 logging.basicConfig(
-    filename='requests.log',
+    filename=log_file,
     level=logging.INFO,
-    format='%(message)s'
+    format='%(message)s',
+    filemode='a'  # Append mode to prevent overwriting
 )
 
 class RequestLoggingMiddleware:
@@ -18,7 +21,7 @@ class RequestLoggingMiddleware:
 
     def __call__(self, request):
         # Get user (handle anonymous users)
-        user = request.user if request.user.is_authenticated else 'Anonymous'
+        user = request.user.username if request.user.is_authenticated else 'Anonymous'
         
         # Log request information
         logging.info(f"{datetime.now()} - User: {user} - Path: {request.path}")
@@ -41,7 +44,7 @@ class RestrictAccessByTimeMiddleware:
         response = self.get_response(request)
         return response
 
-class MessageRateLimitMiddleware:
+class OffensiveLanguageMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
@@ -69,6 +72,7 @@ class MessageRateLimitMiddleware:
             
             # Increment count
             message_data['count'] += 1
+            message_data['timestamp'] = current_time
             cache.set(cache_key, message_data, timeout=60)  # Store for 1 minute
         
         response = self.get_response(request)
@@ -84,7 +88,7 @@ class RolePermissionMiddleware:
             return HttpResponseForbidden("Authentication required")
         
         # Check if user has admin or moderator role
-        # Assuming User model has roles field or is_staff/is_superuser
+        # Assuming User model has is_staff or is_superuser for role checks
         if not (request.user.is_staff or request.user.is_superuser):
             return HttpResponseForbidden("Admin or Moderator role required")
         
