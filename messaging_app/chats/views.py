@@ -7,6 +7,7 @@ from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
 from .permissions import IsParticipantOfConversation
 from .filters import MessageFilter
+from .pagination import StandardResultsSetPagination
 
 class ConversationViewSet(viewsets.ModelViewSet):
     """
@@ -42,6 +43,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['conversation']
     filterset_class = MessageFilter  # Add custom filter
+    pagination_class = StandardResultsSetPagination  # Use custom pagination
 
     def get_queryset(self):
         """Filter messages by conversation_id (from URL or query) and user."""
@@ -65,6 +67,12 @@ class MessageViewSet(viewsets.ModelViewSet):
             raise serializer.ValidationError("Invalid or unauthorized conversation.")
         message = serializer.save(sender=self.request.user, conversation=conversation)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def perform_update(self, serializer):
+        """Update a message, ensuring the user is a participant."""
+        if not self.get_object().conversation.participants.filter(user_id=self.request.user.user_id).exists():
+            return Response({"detail": "You are not a participant in this conversation."}, status=status.HTTP_403_FORBIDDEN)
+        serializer.save()
 
     def perform_destroy(self, instance):
         """Delete a message, ensuring the user is a participant."""
