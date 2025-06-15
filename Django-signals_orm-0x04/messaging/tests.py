@@ -24,3 +24,13 @@ class NotificationSignalTest(TestCase):
         history = MessageHistory.objects.filter(message=message, old_content='Original')
         self.assertTrue(history.exists())
         self.assertTrue(message.edited)
+
+    def test_user_deletion_cleanup(self):
+        message = Message.objects.create(
+            sender=self.sender, receiver=self.receiver, content='Test'
+        )
+        notification = Notification.objects.create(user=self.receiver, message=message)
+        self.sender.delete()
+        self.assertFalse(Message.objects.filter(sender=self.sender).exists())
+        self.assertFalse(Notification.objects.filter(user=self.sender).exists())
+        
