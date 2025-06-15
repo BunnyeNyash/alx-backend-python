@@ -13,3 +13,14 @@ class NotificationSignalTest(TestCase):
         )
         notification = Notification.objects.filter(user=self.receiver, message=message)
         self.assertTrue(notification.exists())
+
+
+    def test_message_edit_history(self):
+        message = Message.objects.create(
+            sender=self.sender, receiver=self.receiver, content='Original'
+        )
+        message.content = 'Edited'
+        message.save()
+        history = MessageHistory.objects.filter(message=message, old_content='Original')
+        self.assertTrue(history.exists())
+        self.assertTrue(message.edited)
