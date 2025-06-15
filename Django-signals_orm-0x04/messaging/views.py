@@ -20,5 +20,9 @@ def threaded_conversation(request, message_id):
         return [(r, get_replies(r)) for r in replies]
     replies_tree = get_replies(message)
     return render(request, 'messaging/threaded.html', {'message': message, 'replies_tree': replies_tree})
+
+def inbox(request):
+    unread_messages = Message.unread.unread_for_user(request.user)
+    return render(request, 'messaging/inbox.html', {'unread_messages': unread_messages})
     
 # Create your views here.
