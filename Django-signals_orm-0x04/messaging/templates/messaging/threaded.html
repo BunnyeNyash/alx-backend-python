@@ -1,0 +1,11 @@
+<ul>
+    <li>{{ message.content }} by {{ message.sender.username }}</li>
+    {% for reply, sub_replies in replies_tree recursive %}
+        <ul>
+            <li>{{ reply.content }} by {{ reply.sender.username }}</li>
+            {% if sub_replies %}
+                {{ sub_replies|recursive }}
+            {% endif %}
+        </ul>
+    {% endfor %}
+</ul>
