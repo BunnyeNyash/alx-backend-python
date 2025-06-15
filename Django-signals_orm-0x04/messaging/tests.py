@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from messaging.models import Message, Notification
+from messaging.models import Message, Notification, MessageHistory
 from django.core.cache import cache
 
 class NotificationSignalTest(TestCase):
@@ -8,6 +8,7 @@ class NotificationSignalTest(TestCase):
         self.sender = User.objects.create_user(username='sender', password='pass')
         self.receiver = User.objects.create_user(username='receiver', password='pass')
 
+    # task 0
     def test_notification_created_on_message(self):
         message = Message.objects.create(
             sender=self.sender, receiver=self.receiver, content='Hello!'
@@ -16,6 +17,7 @@ class NotificationSignalTest(TestCase):
         self.assertTrue(notification.exists())
 
 
+    # task 1
     def test_message_edit_history(self):
         message = Message.objects.create(
             sender=self.sender, receiver=self.receiver, content='Original'
@@ -26,6 +28,7 @@ class NotificationSignalTest(TestCase):
         self.assertTrue(history.exists())
         self.assertTrue(message.edited)
 
+    # task 2
     def test_user_deletion_cleanup(self):
         message = Message.objects.create(
             sender=self.sender, receiver=self.receiver, content='Test'
@@ -35,12 +38,14 @@ class NotificationSignalTest(TestCase):
         self.assertFalse(Message.objects.filter(sender=self.sender).exists())
         self.assertFalse(Notification.objects.filter(user=self.sender).exists())
 
+    # task 3
     def test_threaded_conversation(self):
         parent = Message.objects.create(sender=self.sender, receiver=self.receiver, content='Parent')
         reply = Message.objects.create(sender=self.receiver, receiver=self.sender, content='Reply', parent_message=parent)
         message = Message.objects.prefetch_related('replies').get(id=parent.id)
         self.assertEqual(list(message.replies.all()), [reply])
 
+    # task 4
     def test_unread_messages_manager(self):
         Message.objects.create(sender=self.sender, receiver=self.receiver, content='Unread', read=False)
         Message.objects.create(sender=self.sender, receiver=self.receiver, content='Read', read=True)
@@ -48,6 +53,7 @@ class NotificationSignalTest(TestCase):
         self.assertEqual(unread.count(), 1)
         self.assertEqual(unread[0].content, 'Unread')
 
+    # task 5
     def test_view_cache(self):
         cache.clear()
         response1 = self.client.get(reverse('conversation_list'))
