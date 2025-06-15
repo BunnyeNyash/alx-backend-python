@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -36,5 +36,13 @@ def delete_user(request):
     user = request.user
     user.delete()
     return HttpResponseRedirect(reverse('home'))  # Redirect after deletion
+
+# edit history of a message.
+@login_required
+def message_edit_history(request, message_id):
+    message = get_object_or_404(Message, id=message_id, sender=request.user)  # Restrict to sender
+    history = message.history.select_related('edited_by').all()
+    return render(request, 'messaging/edit_history.html', {'message': message, 'history': history})
+
 
 # Create your views here.
