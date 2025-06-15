@@ -8,6 +8,7 @@ from django.views.decorators.cache import cache_page
 
 # Task 5: Cached conversation list
 @cache_page(60)  # Cache for 60 seconds
+@login_required
 def conversation_list(request):
     messages = Message.objects.filter(receiver=request.user).select_related('sender')
     return render(request, 'messaging/conversation.html', {'messages': messages})
@@ -15,15 +16,13 @@ def conversation_list(request):
 # Task 4: Inbox with unread messages
 @login_required
 def inbox(request):
-    unread_messages = Message.unread.unread_for_user(request.user)
+    unread_messages = Message.unread.unread_for_user(request.user)  # Uses .only() in manager
     return render(request, 'messaging/inbox.html', {'unread_messages': unread_messages})
 
 # Task 3: Threaded conversation
 @login_required
 def threaded_conversation(request, message_id):
-    # Fetch message and its replies efficiently
     message = Message.objects.select_related('sender', 'receiver').prefetch_related('replies').get(id=message_id)
-    # Recursive function to collect all replies
     def get_replies(msg):
         replies = msg.replies.select_related('sender', 'receiver').all()
         return [(r, get_replies(r)) for r in replies]
@@ -40,7 +39,7 @@ def delete_user(request):
 # edit history of a message.
 @login_required
 def message_edit_history(request, message_id):
-    message = get_object_or_404(Message, id=message_id, sender=request.user)  # Restrict to sender
+    message = get_object_or_404(Message, id=message_id, sender=request.user)
     history = message.history.select_related('edited_by').all()
     return render(request, 'messaging/edit_history.html', {'message': message, 'history': history})
 
