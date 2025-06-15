@@ -1,23 +1,20 @@
 from django.db import models
 from django.contrib.auth.models import User
-
-class UnreadMessagesManager(models.Manager):
-    def unread_for_user(self, user):
-        return self.filter(receiver=user, read=False).only('id', 'content', 'sender__username', 'timestamp')
+from .managers import UnreadMessagesManager
 
 class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
-    edited = models.BooleanField(default=False)    # task 1
+    edited = models.BooleanField(default=False)  # Task 1
+    read = models.BooleanField(default=False)  # Task 4
     parent_message = models.ForeignKey(
         'self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies'
-    )     # task 3
-    
-    read = models.BooleanField(default=False)    # task 4
-    objects = models.Manager()  # Default manager
-    unread = UnreadMessagesManager()      # Custom manager for task 4
+    )  # Task 3
+
+    objects = models.Manager()
+    unread = UnreadMessagesManager()
 
     class Meta:
         ordering = ['timestamp']
@@ -32,4 +29,4 @@ class MessageHistory(models.Model):
     message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name='history')
     old_content = models.TextField()
     edited_at = models.DateTimeField(auto_now_add=True)
-    edited_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='message_edits')
+    edited_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='message_edits')  # Task 1
