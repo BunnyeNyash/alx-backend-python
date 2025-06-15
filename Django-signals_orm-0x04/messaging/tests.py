@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 from messaging.models import Message, Notification
+from django.core.cache import cache
 
 class NotificationSignalTest(TestCase):
     def setUp(self):
@@ -46,4 +47,11 @@ class NotificationSignalTest(TestCase):
         unread = Message.unread.unread_for_user(self.receiver)
         self.assertEqual(unread.count(), 1)
         self.assertEqual(unread[0].content, 'Unread')
+
+    def test_view_cache(self):
+        cache.clear()
+        response1 = self.client.get(reverse('conversation_list'))
+        response2 = self.client.get(reverse('conversation_list'))
+        self.assertEqual(response1.content, response2.content)  # Cached response
+        
 # create your tests here
