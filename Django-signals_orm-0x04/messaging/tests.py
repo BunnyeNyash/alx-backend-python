@@ -75,6 +75,8 @@ class MessagingTests(TestCase):
         unread = Message.unread.unread_for_user(self.receiver)
         self.assertEqual(unread.count(), 1)
         self.assertEqual(unread[0].content, 'Unread')
+        # Verify optimization
+        self.assertEqual(list(unread.values('id', 'content', 'sender__username', 'timestamp').count()), 1)
 
     def test_view_cache(self):
         """Task 5: Test conversation_list view caching"""
