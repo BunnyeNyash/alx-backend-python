@@ -13,7 +13,7 @@ class Message(models.Model):
     edited = models.BooleanField(default=False)    # task 1
     parent_message = models.ForeignKey(
         'self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies'
-    )
+    )     # task 3
     
     read = models.BooleanField(default=False)    # task 4
     objects = models.Manager()  # Default manager
