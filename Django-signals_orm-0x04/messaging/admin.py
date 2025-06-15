@@ -13,4 +13,4 @@ class NotificationAdmin(admin.ModelAdmin):
 class MessageHistoryAdmin(admin.ModelAdmin):
     list_display = ['message', 'old_content', 'edited_by', 'edited_at']
 
-# Register your models here
+# Register your models here 
