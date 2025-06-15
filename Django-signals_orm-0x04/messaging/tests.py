@@ -39,5 +39,11 @@ class NotificationSignalTest(TestCase):
         reply = Message.objects.create(sender=self.receiver, receiver=self.sender, content='Reply', parent_message=parent)
         message = Message.objects.prefetch_related('replies').get(id=parent.id)
         self.assertEqual(list(message.replies.all()), [reply])
-        
+
+    def test_unread_messages_manager(self):
+        Message.objects.create(sender=self.sender, receiver=self.receiver, content='Unread', read=False)
+        Message.objects.create(sender=self.sender, receiver=self.receiver, content='Read', read=True)
+        unread = Message.unread.unread_for_user(self.receiver)
+        self.assertEqual(unread.count(), 1)
+        self.assertEqual(unread[0].content, 'Unread')
 # create your tests here
