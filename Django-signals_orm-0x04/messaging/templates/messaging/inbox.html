@@ -1,0 +1,5 @@
+<ul>
+    {% for message in unread_messages %}
+        <li>{{ message.content }} from {{ message.sender.username }}</li>
+    {% endfor %}
+</ul>
