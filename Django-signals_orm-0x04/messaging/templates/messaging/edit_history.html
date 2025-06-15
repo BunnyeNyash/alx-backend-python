@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Message Edit History</title>
+</head>
+<body>
+    <h1>Edit History for Message</h1>
+    <p>Current Content: {{ message.content }}</p>
+    <p>Sent by: {{ message.sender.username }}</p>
+    <h2>Edit History</h2>
+    <ul>
+        {% for entry in history %}
+            <li>
+                Old Content: {{ entry.old_content }}<br>
+                Edited by: {{ entry.edited_by.username }}<br>
+                Edited at: {{ entry.edited_at }}
+            </li>
+        {% empty %}
+            <li>No edits recorded.</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'conversation_list' %}">Back to Conversations</a>
+</body>
+</html>
