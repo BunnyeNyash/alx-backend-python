@@ -10,13 +10,14 @@ class Message(models.Model):
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
-    edited = models.BooleanField(default=False)
+    edited = models.BooleanField(default=False)    # task 1
     parent_message = models.ForeignKey(
         'self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies'
     )
-    read = models.BooleanField(default=False)
+    
+    read = models.BooleanField(default=False)    # task 4
     objects = models.Manager()  # Default manager
-    unread = UnreadMessagesManager()      # Custom manager
+    unread = UnreadMessagesManager()      # Custom manager for task 4
 
     class Meta:
         ordering = ['timestamp']
