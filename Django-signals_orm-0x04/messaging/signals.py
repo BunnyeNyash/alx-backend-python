@@ -3,11 +3,13 @@ from django.dispatch import receiver
 from django.contrib.auth.models import User
 from messaging.models import Message, Notification, MessageHistory
 
+# Task 0: Create notification on new message
 @receiver(post_save, sender=Message)
 def create_notification(sender, instance, created, **kwargs):
     if created:
         Notification.objects.create(user=instance.receiver, message=instance)
 
+# Task 1: Log message edits
 @receiver(pre_save, sender=Message)
 def log_message_edit(sender, instance, **kwargs):
     if instance.pk:  # Check if message is being updated
@@ -20,6 +22,7 @@ def log_message_edit(sender, instance, **kwargs):
                 edited_by=instance.sender  # Assume sender is the editor
             )
 
+# Task 2: Clean up user data on deletion
 @receiver(post_delete, sender=User)
 def cleanup_user_data(sender, instance, **kwargs):
     # Delete messages where user is sender or receiver
