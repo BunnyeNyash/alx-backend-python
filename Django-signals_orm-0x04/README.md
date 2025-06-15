@@ -71,6 +71,7 @@ python manage.py makemigrations && python manage.py migrate
 ```bash
 python manage.py runserver
 ```
+- Visit http://127.0.0.1:8000/admin/ and log in to verify the setup.
 
 ## Tasks
 - Task 0: Implement Signals for User Notifications
