@@ -33,4 +33,11 @@ class NotificationSignalTest(TestCase):
         self.sender.delete()
         self.assertFalse(Message.objects.filter(sender=self.sender).exists())
         self.assertFalse(Notification.objects.filter(user=self.sender).exists())
+
+    def test_threaded_conversation(self):
+        parent = Message.objects.create(sender=self.sender, receiver=self.receiver, content='Parent')
+        reply = Message.objects.create(sender=self.receiver, receiver=self.sender, content='Reply', parent_message=parent)
+        message = Message.objects.prefetch_related('replies').get(id=parent.id)
+        self.assertEqual(list(message.replies.all()), [reply])
         
+# create your tests here
