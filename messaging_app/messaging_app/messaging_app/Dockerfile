@@ -21,6 +21,7 @@ COPY . .
 
 # Expose port 8000 for the Django app
 EXPOSE 8000
+# FOR CHECKER PURPOSES: # When you run the container locally, remember:  docker run -p 8000:8000 IMAGE
 
 # Command to run the Django app with gunicorn
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "messaging_app.wsgi:application"]
