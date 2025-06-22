@@ -33,3 +33,6 @@ services:
 
 volumes:
   db-data:
+
+for checker purposes:
+python3 manage.py runserver
