@@ -1,0 +1,138 @@
+{
+    "info": {
+        "name": "MessagingAppAPI",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Obtain JWT Token",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {"key": "Content-Type", "value": "application/json"}
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\"username\": \"alice\", \"password\": \"pass123\"}"
+                },
+                "url": {
+                    "raw": "http://127.0.0.1:8000/api/token/",
+                    "host": ["127.0.0.1"],
+                    "port": "8000",
+                    "path": ["api", "token", ""]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Create Conversation",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {"key": "Authorization", "value": "Bearer {{alice_token}}"},
+                    {"key": "Content-Type", "value": "application/json"}
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\"participant_ids\": [\"<user1.user_id>\", \"<user2.user_id>\"]}"
+                },
+                "url": {
+                    "raw": "http://127.0.0.1:8000/api/conversations/",
+                    "host": ["127.0.0.1"],
+                    "port": "8000",
+                    "path": ["api", "conversations", ""]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Send Message",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {"key": "Authorization", "value": "Bearer {{alice_token}}"},
+                    {"key": "Content-Type", "value": "application/json"}
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\"sender_id\": \"<user1.user_id>\", \"message_body\": \"Hello, Bob!\"}"
+                },
+                "url": {
+                    "raw": "http://127.0.0.1:8000/api/conversations/{{conversation_id}}/messages/",
+                    "host": ["127.0.0.1"],
+                    "port": "8000",
+                    "path": ["api", "conversations", "{{conversation_id}}", "messages", ""]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Fetch Conversations",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {"key": "Authorization", "value": "Bearer {{alice_token}}"}
+                ],
+                "url": {
+                    "raw": "http://127.0.0.1:8000/api/conversations/",
+                    "host": ["127.0.0.1"],
+                    "port": "8000",
+                    "path": ["api", "conversations", ""]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Fetch Messages",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {"key": "Authorization", "value": "Bearer {{alice_token}}"}
+                ],
+                "url": {
+                    "raw": "http://127.0.0.1:8000/api/conversations/{{conversation_id}}/messages/?page=1",
+                    "host": ["127.0.0.1"],
+                    "port": "8000",
+                    "path": ["api", "conversations", "{{conversation_id}}", "messages", ""],
+                    "query": [{"key": "page", "value": "1"}]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Unauthorized Access (No Token)",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "http://127.0.0.1:8000/api/conversations/{{conversation_id}}/messages/",
+                    "host": ["127.0.0.1"],
+                    "port": "8000",
+                    "path": ["api", "conversations", "{{conversation_id}}", "messages", ""]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Non-Participant Access",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {"key": "Authorization", "value": "Bearer {{bob_token}}"},
+                    {"key": "Content-Type", "value": "application/json"}
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\"sender_id\": \"<user3.user_id>\", \"message_body\": \"Unauthorized attempt\"}"
+                },
+                "url": {
+                    "raw": "http://127.0.0.1:8000/api/conversations/{{conversation_id}}/messages/",
+                    "host": ["127.0.0.1"],
+                    "port": "8000",
+                    "path": ["api", "conversations", "{{conversation_id}}", "messages", ""]
+                }
+            },
+            "response": []
+        }
+    ]
+}
