@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Scale deployment to 3 replicas
+kubectl scale deployment messaging-app --replicas=3
+
+# Verify pods
+kubectl get pods -l app=messaging-app
+
+# Run load test with wrk (access via port-forward)
+kubectl port-forward service/messaging-app-service 8000:80 &
+sleep 5
+wrk -t4 -c100 -d30s http://localhost:8000
+
+# Monitor resource usage
+kubectl top pods -l app=messaging-app
