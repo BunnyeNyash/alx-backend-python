@@ -1,0 +1,14 @@
+# Enable the Ingress addon in Minikube
+minikube addons enable ingress
+
+# Apply the Ingress configuration
+kubectl apply -f ingress.yaml
+
+# Verify the Ingress is properly configured
+kubectl get ingress
+
+# Get the Ingress IP address
+minikube ip
+
+# Add the following line to /etc/hosts (replace IP_ADDRESS with actual minikube IP):
+# IP_ADDRESS messaging-app.local 
