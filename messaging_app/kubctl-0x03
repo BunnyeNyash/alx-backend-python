@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Apply updated deployment
+kubectl apply -f blue_deployment.yaml
+
+# Monitor rollout status
+kubectl rollout status deployment/messaging-app-blue
+
+# Test for downtime
+kubectl port-forward service/messaging-app-service 8000:80 &
+sleep 5
+while true; do curl http://localhost:8000; sleep 1; done &
+CURL_PID=$!
+sleep 30
+kill $CURL_PID
+
+# Verify pods
+kubectl get pods -l app=messaging-app-blue
