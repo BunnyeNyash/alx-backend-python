@@ -13,10 +13,17 @@ spec:
       labels:
         app: messaging-app-blue
     spec:
+      # containers:
+      # - name: messaging-app
+      #   image: bunnye/messaging-app:latest
+      #   imagePullPolicy: Always
+        
+    # Update the blue_deployment.yaml to version 2.0
       containers:
       - name: messaging-app
-        image: bunnye/messaging-app:latest
+        image: bunnye/messaging-app:v2.0
         imagePullPolicy: Always
+        
         ports:
         - containerPort: 8000
         env:
