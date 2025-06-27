@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: messaging-app
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: messaging-app
+  template:
+    metadata:
+      labels:
+        app: messaging-app
+    spec:
+      containers:
+      - name: messaging-app
+        image: bunnye/messaging-app:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_HOST
+          value: "mysql-service"
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secrets
+              key: mysql-user
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secrets
+              key: mysql-password
+        - name: DATABASE_NAME
+          value: "messaging_db"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: messaging-app-service
+  namespace: default
+spec:
+  selector:
+    app: messaging-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8000
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+  namespace: default
+spec:
+  selector:
+    app: mysql
+  ports:
+  - protocol: TCP
+    port: 3306
+    targetPort: 3306
+  type: ClusterIP
