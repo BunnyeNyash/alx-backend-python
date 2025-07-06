@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+    stages {
+        stage('Clone Code') {
+            steps {
+                echo 'Cloning the code from GitHub'
+                git url: 'https://github.com/yourusername/alx-backend-python.git', branch: 'main', credentialsId: 'github-credentials'
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                echo 'Installing dependencies'
+                sh 'pip install -r messaging_app/requirements.txt'
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                echo 'Running pytest'
+                sh 'python -m pytest messaging_app/tests --junitxml=messaging_app/reports/junit-report.xml'
+            }
+        }
+        stage('Archive Test Report') {
+            steps {
+                echo 'Archiving test report'
+                junit 'messaging_app/reports/junit-report.xml'
+                archiveArtifacts 'messaging_app/reports/*'
+            }
+        }
+    }
+    post {
+        always {
+            echo 'Pipeline completed'
+        }
+        success {
+            echo 'Tests passed successfully'
+        }
+        failure {
+            echo 'Tests failed'
+        }
+    }
+}
