@@ -26,6 +26,22 @@ pipeline {
                 archiveArtifacts 'messaging_app/reports/*'
             }
         }
+        stage('Build Docker Image') {
+            steps {
+                echo 'Building Docker image'
+                sh 'docker build -t messaging-app:${env.BUILD_ID} messaging_app/'
+            }
+        }
+        stage('Push to Docker Hub') {
+            steps {
+                echo 'Pushing Docker image to Docker Hub'
+                withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'dockerHubPass', usernameVariable: 'dockerHubUser')]) {
+                    sh 'docker tag messaging-app:${env.BUILD_ID} ${dockerHubUser}/messaging-app:latest'
+                    sh 'docker login -u ${dockerHubUser} -p ${dockerHubPass}'
+                    sh 'docker push ${dockerHubUser}/messaging-app:latest'
+                }
+            }
+        }
     }
     post {
         always {
