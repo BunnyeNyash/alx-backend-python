@@ -4,13 +4,13 @@ pipeline {
         stage('Clone Code') {
             steps {
                 echo 'Cloning the code from GitHub'
-                git url: 'https://github.com/yourusername/alx-backend-python.git', branch: 'main', credentialsId: 'github-credentials'
+                git url: 'https://github.com/yourusername/alx-backend-python.git', git branch: 'main', credentialsId: 'github-credentials'
             }
         }
         stage('Install Dependencies') {
             steps {
                 echo 'Installing dependencies'
-                sh 'pip install -r messaging_app/requirements.txt'
+                sh 'pip3 install -r messaging_app/requirements.txt'
             }
         }
         stage('Run Tests') {
